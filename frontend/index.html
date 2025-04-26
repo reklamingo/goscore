@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Şirket Sürdürülebilirlik Analizi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Şirket Sürdürülebilirlik Analizi</h1>
+        <form id="companyForm">
+            <input type="text" placeholder="Şirket Adı" required>
+            <input type="number" placeholder="Yıllık Ciro (₺)" required>
+            <input type="number" placeholder="Çalışan Sayısı" required>
+            <input type="text" placeholder="Ürün Grubu" required>
+            <input type="text" placeholder="Sektör" required>
+            <input type="number" placeholder="Karlılık Oranı (%)" required>
+            <select required>
+                <option value="">Borç Durumu</option>
+                <option value="Düşük">Düşük</option>
+                <option value="Orta">Orta</option>
+                <option value="Yüksek">Yüksek</option>
+            </select>
+            <select required>
+                <option value="">İhracat Var mı?</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
+            </select>
+            <select required>
+                <option value="">Yenilikçilik Yatırımı Var mı?</option>
+                <option value="Evet">Evet</option>
+                <option value="Hayır">Hayır</option>
+            </select>
+            <button type="submit">Analizi Başlat</button>
+        </form>
+
+        <div class="result hidden">
+            <h2>🎯 82/100 <span class="badge">Sağlam</span></h2>
+            <p>Şirketiniz sürdürülebilirlik açısından sağlam bir yapıya sahip.</p>
+            <button id="detailsBtn">Detaylı Analizi Gör</button>
+
+            <div class="details hidden">
+                <h3>Detaylı Analiz</h3>
+                <ul>
+                    <li>Güçlü Yanlar: Yüksek karlılık, düşük borç seviyesi</li>
+                    <li>Zayıf Noktalar: Ürün grubu çeşitliliği düşük</li>
+                    <li>Riskler: Küresel pazarda rekabet artışı</li>
+                    <li>Fırsatlar: İhracat potansiyeli</li>
+                    <li>Tavsiyeler: Ürün çeşitliliğini artır, yeni pazarlara açıl</li>
+                </ul>
+                <button id="pdfBtn">PDF İndir</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const form = document.getElementById('companyForm');
+    const result = document.querySelector('.result');
+    const detailsBtn = document.getElementById('detailsBtn');
+    const details = document.querySelector('.details');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        form.classList.add('hidden');
+        result.classList.remove('hidden');
+    });
+
+    detailsBtn.addEventListener('click', function() {
+        details.classList.toggle('hidden');
+    });
+</script>
+</body>
+</html>
