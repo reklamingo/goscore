@@ -8,12 +8,13 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 const corsOptions = {
-  origin: 'https://reklamingo-surdurulebilirlik-skoru.onrender.com', 
+  origin: 'https://reklamingo-surdurulebilirlik-skoru.onrender.com',
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Preflight (OPTIONS) isteğini düzgün cevapla
 
 app.use(express.json());
 
