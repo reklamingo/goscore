@@ -11,29 +11,47 @@ app.use(cors());
 app.use(express.json());
 
 app.post('/analyze', async (req, res) => {
-    const { companyName, sector, turnover, employees, profitability, debtLevel, exportStatus, innovationStatus } = req.body;
+    const {
+        companyName,
+        turnover,
+        grossProfitMargin,
+        debtRatio,
+        debtMaturity,
+        rentExpense,
+        personnelExpense,
+        taxExpense,
+        otherExpense,
+        sector,
+        newProject
+    } = req.body;
 
     try {
         const prompt = `
 Şu şirket bilgilerini analiz et:
 - Şirket Adı: ${companyName}
+- Yıllık Ciro: ${turnover} ₺
+- Brüt Karlılık Oranı: ${grossProfitMargin}%
+- Borç/Ciro Oranı: ${debtRatio}%
+- Borçların Ortalama Vadesi: ${debtMaturity}
+- Aylık Kira Gideri: ${rentExpense} ₺
+- Aylık Personel Gideri: ${personnelExpense} ₺
+- Aylık Vergi Gideri: ${taxExpense} ₺
+- Aylık Diğer İşletme Giderleri: ${otherExpense} ₺
 - Sektör: ${sector}
-- Ciro: ${turnover} ₺
-- Çalışan Sayısı: ${employees}
-- Karlılık: ${profitability}%
-- Borç Seviyesi: ${debtLevel}
-- İhracat: ${exportStatus}
-- Yenilikçilik Yatırımı: ${innovationStatus}
+- En Yeni Proje: ${newProject}
 
-Bu şirket için:
-- 0-100 arası bir Sürdürülebilirlik Skoru ver.
-- Bir cümlelik kısa analiz yaz.
-- Güçlü Yanlar
-- Zayıf Noktalar
-- Riskler
-- Fırsatlar
-- Tavsiyeler
-Şeklinde detaylı bir analiz oluştur.
+Bu bilgiler ışığında:
+1. Şirketin genel sürdürülebilirlik skorunu 0-100 arası puanla.
+2. Skorun hemen altında bir cümlelik genel bir kısa analiz yaz.
+3. Ardından şunları ayrı ayrı bölümlerde yaz:
+   - Güçlü Yanlar
+   - Zayıf Noktalar
+   - Mevcut Riskler
+   - Fırsatlar
+   - Tavsiyeler
+4. En yeni proje hakkında ayrıca yorum yap:
+   - Bu proje şirketin sürdürülebilirlik skoruna pozitif mi, negatif mi etkisi olur? Neden?
+Lütfen yanıtını sıralı, açık ve nitelikli yaz.
         `;
 
         const openaiRes = await axios.post('https://api.openai.com/v1/chat/completions', {
