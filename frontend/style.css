@@ -7,7 +7,7 @@ body {
     padding: 0;
 }
 .container {
-    max-width: 600px;
+    max-width: 700px;
     margin: 50px auto;
     padding: 20px;
 }
@@ -18,14 +18,14 @@ form {
     display: flex;
     flex-direction: column;
 }
-input, select, button {
+input, select, textarea, button {
     padding: 12px;
     margin: 8px 0;
     border: 1px solid #003e92;
     border-radius: 8px;
 }
 button {
-    background-color: #3ecf00;
+    background-color: #003e92;
     color: #ffffff;
     font-weight: bold;
     border: none;
@@ -39,6 +39,23 @@ button {
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 14px;
+}
+.loading .progress-bar {
+    width: 100%;
+    background: #eeeeee;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+.loading .progress {
+    width: 0;
+    height: 10px;
+    background: #3ecf00;
+    border-radius: 10px;
+    animation: loading 2s forwards;
+}
+@keyframes loading {
+    0% { width: 0; }
+    100% { width: 100%; }
 }
 .details {
     margin-top: 20px;

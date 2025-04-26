@@ -12,60 +12,117 @@
     <div class="container">
         <h1>Şirket Sürdürülebilirlik Analizi</h1>
         <form id="companyForm">
-            <input type="text" placeholder="Şirket Adı" required>
-            <input type="number" placeholder="Yıllık Ciro (₺)" required>
-            <input type="number" placeholder="Çalışan Sayısı" required>
-            <input type="text" placeholder="Ürün Grubu" required>
-            <input type="text" placeholder="Sektör" required>
-            <input type="number" placeholder="Karlılık Oranı (%)" required>
-            <select required>
-                <option value="">Borç Durumu</option>
-                <option value="Düşük">Düşük</option>
+            <input type="text" id="companyName" placeholder="Şirket Adı" required>
+            <input type="number" id="turnover" placeholder="Yıllık Ciro (₺)" required>
+            <input type="number" id="grossProfitMargin" placeholder="Brüt Karlılık Oranı (%)" required>
+            <input type="number" id="debtRatio" placeholder="Borç/Ciro Oranı (%)" required>
+            <select id="debtMaturity" required>
+                <option value="">Borçların Ortalama Vadesi</option>
+                <option value="Kısa">Kısa</option>
                 <option value="Orta">Orta</option>
-                <option value="Yüksek">Yüksek</option>
+                <option value="Uzun">Uzun</option>
             </select>
-            <select required>
-                <option value="">İhracat Var mı?</option>
-                <option value="Evet">Evet</option>
-                <option value="Hayır">Hayır</option>
+            <input type="number" id="rentExpense" placeholder="Aylık Kira Gideri (₺)" required>
+            <input type="number" id="personnelExpense" placeholder="Aylık Personel Gideri (₺)" required>
+            <input type="number" id="taxExpense" placeholder="Aylık Vergi Gideri (₺)" required>
+            <input type="number" id="otherExpense" placeholder="Aylık Diğer Giderler (₺)" required>
+            <select id="sector" required>
+                <option value="">Sektör Seçin</option>
+                <option value="Gıda">Gıda</option>
+                <option value="Teknoloji">Teknoloji</option>
+                <option value="Lojistik">Lojistik</option>
+                <option value="Danışmanlık">Danışmanlık</option>
+                <option value="Üretim">Üretim</option>
+                <option value="Hizmet">Hizmet</option>
+                <option value="Sağlık">Sağlık</option>
+                <option value="Eğitim">Eğitim</option>
+                <option value="İnşaat">İnşaat</option>
+                <option value="Perakende">Perakende</option>
+                <option value="E-Ticaret">E-Ticaret</option>
             </select>
-            <select required>
-                <option value="">Yenilikçilik Yatırımı Var mı?</option>
-                <option value="Evet">Evet</option>
-                <option value="Hayır">Hayır</option>
-            </select>
+            <textarea id="newProject" placeholder="En Yeni Projeniz Nedir?" required></textarea>
             <button type="submit">Analizi Başlat</button>
         </form>
 
+        <div class="loading hidden">
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+            <p>Analiz yapılıyor...</p>
+        </div>
+
         <div class="result hidden">
-            <h2>🎯 82/100 <span class="badge">Sağlam</span></h2>
-            <p>Şirketiniz sürdürülebilirlik açısından sağlam bir yapıya sahip.</p>
+            <h1 id="displayCompanyName"></h1>
+            <h2>🎯 <span id="score"></span> <span id="scoreLabel" class="badge"></span></h2>
+            <p id="shortAnalysis"></p>
             <button id="detailsBtn">Detaylı Analizi Gör</button>
 
-            <div class="details hidden">
-                <h3>Detaylı Analiz</h3>
-                <ul>
-                    <li>Güçlü Yanlar: Yüksek karlılık, düşük borç seviyesi</li>
-                    <li>Zayıf Noktalar: Ürün grubu çeşitliliği düşük</li>
-                    <li>Riskler: Küresel pazarda rekabet artışı</li>
-                    <li>Fırsatlar: İhracat potansiyeli</li>
-                    <li>Tavsiyeler: Ürün çeşitliliğini artır, yeni pazarlara açıl</li>
-                </ul>
-                <button id="pdfBtn">PDF İndir</button>
-            </div>
+            <div class="details hidden" id="detailsContent"></div>
         </div>
     </div>
 
 <script>
     const form = document.getElementById('companyForm');
     const result = document.querySelector('.result');
+    const loading = document.querySelector('.loading');
     const detailsBtn = document.getElementById('detailsBtn');
-    const details = document.querySelector('.details');
+    const details = document.getElementById('detailsContent');
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         form.classList.add('hidden');
-        result.classList.remove('hidden');
+        loading.classList.remove('hidden');
+
+        const data = {
+            companyName: document.getElementById('companyName').value,
+            turnover: document.getElementById('turnover').value,
+            grossProfitMargin: document.getElementById('grossProfitMargin').value,
+            debtRatio: document.getElementById('debtRatio').value,
+            debtMaturity: document.getElementById('debtMaturity').value,
+            rentExpense: document.getElementById('rentExpense').value,
+            personnelExpense: document.getElementById('personnelExpense').value,
+            taxExpense: document.getElementById('taxExpense').value,
+            otherExpense: document.getElementById('otherExpense').value,
+            sector: document.getElementById('sector').value,
+            newProject: document.getElementById('newProject').value
+        };
+
+        try {
+            const response = await fetch('https://company-analyzer-backend.onrender.com/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const resultData = await response.json();
+
+            loading.classList.add('hidden');
+            result.classList.remove('hidden');
+
+            const [scoreLine, shortLine, ...rest] = resultData.result.split('\n').filter(line => line.trim() !== "");
+
+            document.getElementById('displayCompanyName').textContent = data.companyName;
+            document.getElementById('score').textContent = scoreLine.split(':')[1].trim();
+            document.getElementById('shortAnalysis').textContent = shortLine.trim();
+
+            let scoreValue = parseInt(scoreLine.split(':')[1].trim());
+            const badge = document.getElementById('scoreLabel');
+            if (scoreValue >= 75) {
+                badge.textContent = "Sağlam";
+                badge.style.backgroundColor = "#3ecf00";
+            } else if (scoreValue >= 50) {
+                badge.textContent = "İyileştirilebilir";
+                badge.style.backgroundColor = "#fb8c00";
+            } else {
+                badge.textContent = "Kritik";
+                badge.style.backgroundColor = "#e53935";
+            }
+
+            details.innerHTML = rest.join('<br><br>');
+
+        } catch (err) {
+            console.error(err);
+            alert("Analiz sırasında bir hata oluştu.");
+        }
     });
 
     detailsBtn.addEventListener('click', function() {
